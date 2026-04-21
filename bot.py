@@ -12,6 +12,9 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
+user_messages = {}
+chat_messages = {}
+
 DEADLINE = datetime(2026, 4, 23, 18, 50)
 
 def get_time_left():
