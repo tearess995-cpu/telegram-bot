@@ -38,6 +38,10 @@ def get_progress_bar():
     return f"{bar} {percent}%"
 
 
+def format_time(n):
+    return f"{n:02d}"
+
+
 def get_time_left():
     now = datetime.now()
     diff = DEADLINE - now
@@ -55,13 +59,15 @@ def get_time_left():
     progress = get_progress_bar()
 
     return (
-        "✈️ <b>Поездка в Таиланд</b>\n\n"
-        "━━━━━━━━━━━━━━━\n"
-        f"📅 <b>Осталось (обновляется каждые 10 секунд):</b>\n"
-        f"{days} д {hours} ч {minutes} мин {seconds} сек\n\n"
-        f"📊 <b>Прогресс (От покупки билетов до полёта):</b>\n"
-        f"{progress}\n"
-        "━━━━━━━━━━━━━━━"
+        "✈️ Поездка в Таиланд\n"
+        "Ташкент → Пхукет 🇹🇭\n"
+        "23 апреля 2026 • 23:50\n\n"
+        "────────────────\n\n"
+        f"{days} д {format_time(hours)} ч {format_time(minutes)} мин {format_time(seconds)} сек\n\n"
+        f"{progress}\n\n"
+        "От покупки билетов до полёта\n\n"
+        "────────────────\n\n"
+        "обновляется каждые 10 секунд"
     )
 
 
