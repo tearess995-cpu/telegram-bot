@@ -1,23 +1,14 @@
 import asyncio
 from datetime import datetime
 
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
-)
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    ContextTypes,
-    CallbackQueryHandler
-)
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from telegram.error import BadRequest
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
 DEADLINE = datetime(2026, 4, 23, 18, 50)
-START_TIME = datetime.now()
+START_TIME = datetime(2026, 2, 28, 0, 0)
 
 timer_messages = []
 
@@ -30,17 +21,22 @@ def get_progress_bar():
 
     progress = max(0, min(1, passed / total if total > 0 else 0))
 
-    bars = 10
+    bars = 16
     filled = int(progress * bars)
-    empty = bars - filled
 
-    return f"[{'█' * filled}{'░' * empty}] {int(progress * 100)}%"
+    # делаем “ползунок”
+    bar = ""
+    for i in range(bars):
+        if i < filled:
+            bar += "█"
+        elif i == filled:
+            bar += "●"  # текущая позиция
+        else:
+            bar += "░"
 
+    percent = int(progress * 100)
 
-def get_keyboard():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔄 Обновить сейчас", callback_data="refresh")]
-    ])
+    return f"{bar} {percent}%"
 
 
 def get_time_left():
@@ -60,9 +56,14 @@ def get_time_left():
     progress = get_progress_bar()
 
     return (
-        f"⏳ До события осталось:\n\n"
+        "⏳ <b>Countdown</b>\n\n"
+        "━━━━━━━━━━━━━━━\n"
+        f"📅 <b>Осталось:</b>\n"
         f"{days} д {hours} ч {minutes} мин {seconds} сек\n\n"
-        f"{progress}"
+        f"📊 <b>Прогресс:</b>\n"
+        f"{progress}\n"
+        "━━━━━━━━━━━━━━━\n"
+        "🔄 Обновляется каждые 10 секунд"
     )
 
 
@@ -74,10 +75,7 @@ async def update_timer():
 
         for msg in timer_messages[:]:
             try:
-                await msg.edit_text(
-                    text,
-                    reply_markup=get_keyboard()
-                )
+                await msg.edit_text(text, parse_mode="HTML")
             except BadRequest as e:
                 if "message to edit not found" in str(e).lower():
                     timer_messages.remove(msg)
@@ -90,7 +88,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = await update.message.reply_text(
         get_time_left(),
-        reply_markup=get_keyboard()
+        parse_mode="HTML"
     )
 
     timer_messages.append(message)
@@ -102,19 +100,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pass
 
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    try:
-        await query.edit_message_text(
-            get_time_left(),
-            reply_markup=get_keyboard()
-        )
-    except:
-        pass
-
-
 async def on_startup(app):
     asyncio.create_task(update_timer())
 
@@ -122,6 +107,5 @@ async def on_startup(app):
 app = ApplicationBuilder().token(TOKEN).post_init(on_startup).build()
 
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(button_handler))
 
 app.run_polling()
