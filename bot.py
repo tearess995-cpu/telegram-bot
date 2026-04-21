@@ -24,13 +24,12 @@ def get_progress_bar():
     bars = 16
     filled = int(progress * bars)
 
-    # делаем “ползунок”
     bar = ""
     for i in range(bars):
         if i < filled:
             bar += "█"
         elif i == filled:
-            bar += "●"  # текущая позиция
+            bar += "●"
         else:
             bar += "░"
 
@@ -56,14 +55,14 @@ def get_time_left():
     progress = get_progress_bar()
 
     return (
-        "⏳ <b>Countdown</b>\n\n"
+        "✈️ <b>Поездка в Таиланд</b>\n\n"
         "━━━━━━━━━━━━━━━\n"
+        "🔄 Обновляется каждые 10 секунд\n\n"
         f"📅 <b>Осталось:</b>\n"
         f"{days} д {hours} ч {minutes} мин {seconds} сек\n\n"
-        f"📊 <b>Прогресс:</b>\n"
+        f"📊 <b>Прогресс (от покупки билетов до полета):</b>\n"
         f"{progress}\n"
-        "━━━━━━━━━━━━━━━\n"
-        "🔄 Обновляется каждые 10 секунд"
+        "━━━━━━━━━━━━━━━"
     )
 
 
