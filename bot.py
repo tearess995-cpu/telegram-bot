@@ -36,12 +36,44 @@ async def update_timer(message):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = await update.message.reply_text(
-        f"⏳ До события осталось:\n\n{get_time_left()}"
-    )
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
 
-    # запускаем таймер в фоне
-    asyncio.create_task(update_timer(message))
+    # если это личка
+    if update.effective_chat.type == "private":
+        if user_id in user_messages:
+            try:
+                await user_messages[user_id].edit_text(
+                    f"⏳ До события осталось:\n\n{get_time_left()}"
+                )
+                return
+            except:
+                pass
+
+        message = await update.message.reply_text(
+            f"⏳ До события осталось:\n\n{get_time_left()}"
+        )
+
+        user_messages[user_id] = message
+        asyncio.create_task(update_timer(message))
+
+    else:
+        # если группа
+        if chat_id in chat_messages:
+            try:
+                await chat_messages[chat_id].edit_text(
+                    f"⏳ До события осталось:\n\n{get_time_left()}"
+                )
+                return
+            except:
+                pass
+
+        message = await update.message.reply_text(
+            f"⏳ До события осталось:\n\n{get_time_left()}"
+        )
+
+        chat_messages[chat_id] = message
+        asyncio.create_task(update_timer(message))
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
