@@ -7,10 +7,14 @@ from telegram.error import BadRequest
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
-DEADLINE = datetime(2026, 4, 23, 18, 50)
+DEADLINE = datetime(2026, 4, 23, 23, 50)
 START_TIME = datetime(2026, 2, 28, 0, 0)
 
 timer_messages = []
+
+
+def format_time(n):
+    return f"{n:02d}"
 
 
 def get_progress_bar():
@@ -35,9 +39,6 @@ def get_progress_bar():
 
     return f"Ташкент {bar} Пхукет"
 
-def format_time(n):
-    return f"{n:02d}"
-
 
 def get_time_left():
     now = datetime.now()
@@ -57,7 +58,7 @@ def get_time_left():
 
     return (
         "✈️ Поездка в Таиланд\n"
-        "Ташкент → Пхукет 🇹🇭\n"
+        "TAS → HKT 🇹🇭\n"
         "23 апреля 2026 • 23:50\n"
         "\n"
         f"{days} д {format_time(hours)} ч {format_time(minutes)} мин {format_time(seconds)} сек\n"
@@ -68,6 +69,7 @@ def get_time_left():
         "обновляется каждые 10 секунд"
     )
 
+
 async def update_timer():
     while True:
         await asyncio.sleep(10)
@@ -76,7 +78,7 @@ async def update_timer():
 
         for msg in timer_messages[:]:
             try:
-                await msg.edit_text(text, parse_mode="HTML")
+                await msg.edit_text(text)
             except BadRequest as e:
                 if "message to edit not found" in str(e).lower():
                     timer_messages.remove(msg)
@@ -87,11 +89,9 @@ async def update_timer():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
 
-    # ❗ теперь НЕ reply, а обычное сообщение
     message = await context.bot.send_message(
         chat_id=chat.id,
-        text=get_time_left(),
-        parse_mode="HTML"
+        text=get_time_left()
     )
 
     timer_messages.append(message)
