@@ -21,18 +21,17 @@ def get_progress_bar():
 
     progress = max(0, min(1, passed / total if total > 0 else 0))
 
-    bars = 16
-    filled = int(progress * bars)
+    bars = 14  # чуть меньше из-за ширины эмодзи
+    position = int(progress * bars)
 
-    bar = ""
+    bar_parts = []
     for i in range(bars):
-        if i < filled:
-            bar += "█"
-        elif i == filled:
-            bar += "●"
+        if i == position:
+            bar_parts.append("✈️")
         else:
-            bar += "░"
+            bar_parts.append("─")
 
+    bar = "".join(bar_parts)
     percent = int(progress * 100)
 
     return f"{bar} {percent}%"
