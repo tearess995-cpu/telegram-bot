@@ -7,10 +7,11 @@ from telegram.error import BadRequest
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
-DEADLINE = datetime(2026, 4, 23, 18, 50)
+DEADLINE = datetime(2026, 4, 23, 23, 50)
 START_TIME = datetime(2026, 2, 28, 0, 0)
 
 timer_messages = []
+blink = True
 
 
 def format_time(n):
@@ -41,6 +42,8 @@ def get_progress_bar():
 
 
 def get_time_left():
+    global blink
+
     now = datetime.now()
     diff = DEADLINE - now
 
@@ -55,11 +58,20 @@ def get_time_left():
 
     progress = get_progress_bar()
 
+    # мигающее двоеточие
+    separator = ":" if blink else " "
+    blink = not blink
+
+    time_str = f"{total_hours}{separator}{format_time(minutes)}{separator}{format_time(seconds)}"
+
+    # центровка
+    centered_time = f"   {time_str}"
+
     return (
         "✈️ Поездка в Таиланд\n"
         "TAS → HKT 🇹🇭\n"
         "\n"
-        f"{total_hours}:{format_time(minutes)}:{format_time(seconds)}\n"
+        f"{centered_time}\n"
         "\n"
         f"{progress}\n"
         "От покупки билетов до полёта\n"
