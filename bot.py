@@ -57,10 +57,9 @@ def get_time_left():
     return (
         "✈️ <b>Поездка в Таиланд</b>\n\n"
         "━━━━━━━━━━━━━━━\n"
-        "🔄 Обновляется каждые 10 секунд\n\n"
-        f"📅 <b>Осталось:</b>\n"
+        f"📅 <b>Осталось (обновляется каждые 10 секунд):</b>\n"
         f"{days} д {hours} ч {minutes} мин {seconds} сек\n\n"
-        f"📊 <b>Прогресс (от покупки билетов до полета):</b>\n"
+        f"📊 <b>Прогресс (От покупки билетов до полёта):</b>\n"
         f"{progress}\n"
         "━━━━━━━━━━━━━━━"
     )
@@ -85,8 +84,10 @@ async def update_timer():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
 
-    message = await update.message.reply_text(
-        get_time_left(),
+    # ❗ теперь НЕ reply, а обычное сообщение
+    message = await context.bot.send_message(
+        chat_id=chat.id,
+        text=get_time_left(),
         parse_mode="HTML"
     )
 
