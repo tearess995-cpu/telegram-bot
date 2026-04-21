@@ -21,7 +21,7 @@ def get_progress_bar():
 
     progress = max(0, min(1, passed / total if total > 0 else 0))
 
-    bars = 14  # чуть меньше из-за ширины эмодзи
+    bars = 12
     position = int(progress * bars)
 
     bar_parts = []
@@ -32,10 +32,8 @@ def get_progress_bar():
             bar_parts.append("─")
 
     bar = "".join(bar_parts)
-    percent = int(progress * 100)
 
-    return f"{bar} {percent}%"
-
+    return f"Ташкент {bar} Пхукет"
 
 def format_time(n):
     return f"{n:02d}"
