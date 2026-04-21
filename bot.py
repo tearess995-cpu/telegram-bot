@@ -1,18 +1,16 @@
 import asyncio
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 
-UZB_TZ = timezone(timedelta(hours=5))
-
-DEADLINE = datetime(2026, 4, 23, 18, 50, tzinfo=UZB_TZ)
+DEADLINE = datetime(2026, 4, 23, 18, 50,)
 
 def get_time_left():
-    now = datetime.now(UZB_TZ)
+    now = datetime.now
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
-DEADLINE = datetime(2026, 4, 23, 23, 50)
+DEADLINE = datetime(2026, 4, 23, 18, 50)
 
 def get_time_left():
     now = datetime.now()
