@@ -3,12 +3,13 @@ from datetime import datetime
 
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.error import BadRequest
 
-TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
+TOKEN = "ТВОЙ_ТОКЕН"
 
 DEADLINE = datetime(2026, 4, 23, 18, 50)
 
-# список всех сообщений таймера (один таймер на всех)
+# список всех сообщений таймера
 timer_messages = []
 
 
@@ -38,13 +39,15 @@ async def update_timer():
 
         text = get_time_left()
 
-        # копию списка, чтобы можно было удалять внутри цикла
         for msg in timer_messages[:]:
             try:
                 await msg.edit_text(text)
+            except BadRequest as e:
+                # удаляем только если сообщение реально исчезло
+                if "message to edit not found" in str(e).lower():
+                    timer_messages.remove(msg)
             except:
-                # сообщение удалено или ошибка → убираем
-                timer_messages.remove(msg)
+                pass  # игнорируем другие ошибки, чтобы таймер не умирал
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -52,19 +55,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = await update.message.reply_text(get_time_left())
 
-    # добавляем в общий список
+    # добавляем сообщение в общий список
     timer_messages.append(message)
 
-    # если группа — пытаемся закрепить
+    # закрепляем в группе
     if chat.type != "private":
         try:
             await context.bot.pin_chat_message(chat.id, message.message_id)
         except:
-            pass  # нет прав — просто игнорируем
+            pass
 
 
 async def on_startup(app):
-    # запускаем общий таймер (ОДИН на весь бот)
     asyncio.create_task(update_timer())
 
 
