@@ -22,7 +22,7 @@ def get_time_left():
     hours = diff.seconds // 3600
     minutes = (diff.seconds % 3600) // 60
 
-    return f"{days} д {hours} ч {minutes} мин"
+   return f"СЕЙЧАС: {now}\n\n⏳ Осталось:\n{days} д {hours} ч {minutes} мин"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text(
