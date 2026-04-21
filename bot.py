@@ -49,8 +49,7 @@ def get_time_left():
     if total_seconds <= 0:
         return "✈️ Вылет начался\nХорошей поездки 🇹🇭"
 
-    days = total_seconds // 86400
-    hours = (total_seconds % 86400) // 3600
+    total_hours = total_seconds // 3600
     minutes = (total_seconds % 3600) // 60
     seconds = total_seconds % 60
 
@@ -60,7 +59,7 @@ def get_time_left():
         "✈️ Поездка в Таиланд\n"
         "TAS → HKT 🇹🇭\n"
         "\n"
-        f"{days} д {format_time(hours)}:{format_time(minutes)}:{format_time(seconds)}\n"
+        f"{total_hours}:{format_time(minutes)}:{format_time(seconds)}\n"
         "\n"
         f"{progress}\n"
         "От покупки билетов до полёта\n"
