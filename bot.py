@@ -24,11 +24,7 @@ def get_time_left():
 
     return f"{days} д {hours} ч {minutes} мин"
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = await update.message.reply_text(
-        f"⏳ До события осталось:\n\n{get_time_left()}"
-    )
-
+async def update_timer(message):
     while True:
         await asyncio.sleep(60)
         try:
@@ -37,6 +33,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except:
             break
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text(
+        f"⏳ До события осталось:\n\n{get_time_left()}"
+    )
+
+    # запускаем таймер в фоне
+    asyncio.create_task(update_timer(message))
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
