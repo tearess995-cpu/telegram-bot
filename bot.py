@@ -15,14 +15,14 @@ TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 DEADLINE = datetime(2026, 4, 23, 23, 50)
 
 def get_time_left():
-    now = datetime.now()
+    now = datetime.now(UZB_TZ)
     diff = DEADLINE - now
 
     days = diff.days
     hours = diff.seconds // 3600
     minutes = (diff.seconds % 3600) // 60
 
-   return f"СЕЙЧАС: {now}\n\n⏳ Осталось:\n{days} д {hours} ч {minutes} мин"
+    return f"СЕЙЧАС: {now}\n\n⏳ Осталось:\n{days} д {hours} ч {minutes} мин"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text(
