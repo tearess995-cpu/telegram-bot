@@ -1,84 +1,75 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler
 import asyncio
 from datetime import datetime
 
-DEADLINE = datetime(2026, 4, 23, 18, 50,)
-
-def get_time_left():
-    now = datetime.now
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
-
-user_messages = {}
-chat_messages = {}
+TOKEN = "ТВОЙ_ТОКЕН"
 
 DEADLINE = datetime(2026, 4, 23, 18, 50)
+
+# список всех сообщений таймера (один таймер на всех)
+timer_messages = []
+
 
 def get_time_left():
     now = datetime.now()
     diff = DEADLINE - now
 
-    days = diff.days
-    hours = diff.seconds // 3600
-    minutes = (diff.seconds % 3600) // 60
+    total_seconds = int(diff.total_seconds())
 
-    return f"{days} д {hours} ч {minutes} мин"
+    if total_seconds <= 0:
+        return "🎉 Событие началось!"
 
-async def update_timer(message):
+    days = total_seconds // 86400
+    hours = (total_seconds % 86400) // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+
+    return (
+        f"⏳ До события осталось:\n\n"
+        f"{days} д {hours} ч {minutes} мин {seconds} сек"
+    )
+
+
+async def update_timer():
     while True:
-        await asyncio.sleep(60)
-        try:
-            await message.edit_text(
-                f"⏳ До события осталось:\n\n{get_time_left()}"
-            )
-        except:
-            break
+        await asyncio.sleep(1)
+
+        text = get_time_left()
+
+        # копию списка, чтобы можно было удалять внутри цикла
+        for msg in timer_messages[:]:
+            try:
+                await msg.edit_text(text)
+            except:
+                # сообщение удалено или ошибка → убираем
+                timer_messages.remove(msg)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.effective_chat.id
-    user_id = update.effective_user.id
+    chat = update.effective_chat
 
-    # если это личка
-    if update.effective_chat.type == "private":
-        if user_id in user_messages:
-            try:
-                await user_messages[user_id].edit_text(
-                    f"⏳ До события осталось:\n\n{get_time_left()}"
-                )
-                return
-            except:
-                pass
+    message = await update.message.reply_text(get_time_left())
 
-        message = await update.message.reply_text(
-            f"⏳ До события осталось:\n\n{get_time_left()}"
-        )
+    # добавляем в общий список
+    timer_messages.append(message)
 
-        user_messages[user_id] = message
-        asyncio.create_task(update_timer(message))
+    # если группа — пытаемся закрепить
+    if chat.type != "private":
+        try:
+            await context.bot.pin_chat_message(chat.id, message.message_id)
+        except:
+            pass  # нет прав — просто игнорируем
 
-    else:
-        # если группа
-        if chat_id in chat_messages:
-            try:
-                await chat_messages[chat_id].edit_text(
-                    f"⏳ До события осталось:\n\n{get_time_left()}"
-                )
-                return
-            except:
-                pass
 
-        message = await update.message.reply_text(
-            f"⏳ До события осталось:\n\n{get_time_left()}"
-        )
+async def on_startup(app):
+    # запускаем общий таймер (ОДИН на весь бот)
+    asyncio.create_task(update_timer())
 
-        chat_messages[chat_id] = message
-        asyncio.create_task(update_timer(message))
 
-app = ApplicationBuilder().token(TOKEN).build()
+app = ApplicationBuilder().token(TOKEN).post_init(on_startup).build()
+
 app.add_handler(CommandHandler("start", start))
 
 app.run_polling()
