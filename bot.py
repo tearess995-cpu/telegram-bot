@@ -46,7 +46,7 @@ def get_time_left():
     total_seconds = int(diff.total_seconds())
 
     if total_seconds <= 0:
-        return "🎉 Событие началось!"
+        return "✈️ Вылет начался\nХорошей поездки 🇹🇭"
 
     days = total_seconds // 86400
     hours = (total_seconds % 86400) // 3600
@@ -58,15 +58,15 @@ def get_time_left():
     return (
         "✈️ Поездка в Таиланд\n"
         "Ташкент → Пхукет 🇹🇭\n"
-        "23 апреля 2026 • 23:50\n\n"
-        "────────────────\n\n"
-        f"{days} д {format_time(hours)} ч {format_time(minutes)} мин {format_time(seconds)} сек\n\n"
-        f"{progress}\n\n"
-        "От покупки билетов до полёта\n\n"
-        "────────────────\n\n"
+        "23 апреля 2026 • 23:50\n"
+        "\n"
+        f"{days} д {format_time(hours)} ч {format_time(minutes)} мин {format_time(seconds)} сек\n"
+        "\n"
+        f"{progress}\n"
+        "От покупки билетов до полёта\n"
+        "\n"
         "обновляется каждые 10 секунд"
     )
-
 
 async def update_timer():
     while True:
