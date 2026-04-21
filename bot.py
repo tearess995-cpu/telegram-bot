@@ -7,7 +7,7 @@ from telegram.error import BadRequest
 
 TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
 
-DEADLINE = datetime(2026, 4, 23, 23, 50)
+DEADLINE = datetime(2026, 4, 23, 18, 50)
 START_TIME = datetime(2026, 2, 28, 0, 0)
 
 timer_messages = []
@@ -59,9 +59,8 @@ def get_time_left():
     return (
         "✈️ Поездка в Таиланд\n"
         "TAS → HKT 🇹🇭\n"
-        "23 апреля 2026 • 23:50\n"
         "\n"
-        f"{days} д {format_time(hours)} ч {format_time(minutes)} мин {format_time(seconds)} сек\n"
+        f"{days} д {format_time(hours)}:{format_time(minutes)}:{format_time(seconds)}\n"
         "\n"
         f"{progress}\n"
         "От покупки билетов до полёта\n"
