@@ -1,18 +1,22 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler
 import asyncio
 from datetime import datetime
 
-DEADLINE = datetime(2026, 4, 23, 18, 50,)
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes
+)
 
-def get_time_left():
-    now = datetime.now
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-
-TOKEN = "8696969569:AAEVwgdATX26oI3SAU5I-rLI0Fr7yTSvg9Y"
+TOKEN = "ТВОЙ_ТОКЕН"
 
 DEADLINE = datetime(2026, 4, 23, 18, 50)
+
 
 def get_time_left():
     now = datetime.now()
@@ -22,23 +26,50 @@ def get_time_left():
     hours = diff.seconds // 3600
     minutes = (diff.seconds % 3600) // 60
 
-    return f"{days} д {hours} ч {minutes} мин"
+    return f"⏳ До события осталось:\n\n{days} д {hours} ч {minutes} мин"
+
+
+def get_keyboard():
+    keyboard = [
+        [InlineKeyboardButton("🔄 Обновить", callback_data="refresh")]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text(
-        f"⏳ До события осталось:\n\n{get_time_left()}"
+        get_time_left(),
+        reply_markup=get_keyboard()
     )
 
+    # автообновление
     while True:
         await asyncio.sleep(60)
         try:
             await message.edit_text(
-                f"⏳ До события осталось:\n\n{get_time_left()}"
+                get_time_left(),
+                reply_markup=get_keyboard()
             )
         except:
             break
 
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    try:
+        await query.edit_message_text(
+            get_time_left(),
+            reply_markup=get_keyboard()
+        )
+    except:
+        pass
+
+
 app = ApplicationBuilder().token(TOKEN).build()
+
 app.add_handler(CommandHandler("start", start))
+app.add_handler(CallbackQueryHandler(button_handler))
 
 app.run_polling()
