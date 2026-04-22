@@ -32,13 +32,13 @@ def get_time_left():
     time_str = f"{total_hours}:{format_time(minutes)}:{format_time(seconds)}"
 
     return (
-        "✈️ Поездка в Таиланд\n"
-        "TAS → HKT 🇹🇭\n"
-        "\n"
-        f"Осталось {time_str}\n"
-        "\n"
-        "Таймер обновляется каждые 10 секунд"
-    )
+    f"Осталось {time_str}\n"
+    "\n"
+    "✈️ Поездка в Таиланд\n"
+    "TAS → HKT 🇹🇭\n"
+    "\n"
+    "Таймер обновляется каждые 10 секунд"
+)
 
 
 async def update_timer():
